@@ -17,9 +17,9 @@ namespace LTTP.Scenes.EmptyScene
             SetDesignResolution(1280, 720, SceneResolutionPolicy.None);
             Screen.SetSize(1280, 720);
 
-            //var moonTex = Content.Load<Texture2D>(Nez.Content.Shared.Moon);
-            //var playerEntity = CreateEntity("player", new Vector2(Screen.Width / 2, Screen.Height / 2));
-            //playerEntity.AddComponent(new SpriteRenderer(moonTex));
+            var eskimoTexture = Content.Load<Texture2D>(Nez.Content.Characters.Eskimo);
+            var playerEntity = CreateEntity("player", new Vector2(Screen.Width / 2, Screen.Height / 2));
+            playerEntity.AddComponent(new SpriteRenderer(eskimoTexture));
         }
     }
 }
