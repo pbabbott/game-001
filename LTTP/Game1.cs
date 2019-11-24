@@ -1,4 +1,4 @@
-﻿using LTTP.Scenes.EmptyScene;
+﻿using LTTP.Scenes.SimpleMap;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,7 +14,7 @@ namespace LTTP
             base.Initialize();
 
             Window.AllowUserResizing = true;
-            Scene = new BasicScene();
+            Scene = new SimpleMapScene();
         }
     }
 }
