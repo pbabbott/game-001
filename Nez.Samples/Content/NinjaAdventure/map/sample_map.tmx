@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="master-bg" tilewidth="16" tileheight="16" tilecount="5568">
+  <image source="../../../../LTTP/Content/maps/master-bg.png" trans="ffffff" width="1550" height="930"/>
+ </tileset>
+ <layer name="bg" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJztwwENAAAMw6BqnX8Rt3ABkLBqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqPB9WL0/Y=
+  </data>
+ </layer>
+ <layer name="terrain" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJzt2EEKAjEMBdBZTQ/ieNLqyar30kGLIY4uFabvQaiCCxf9JOk0AQAAAAAAAAAAAAB71uZpusyvM9d1/vc/hN9r4f6353kq73UuMsJ4Dvd7v9zrWB6f17N+yMdRRhhMzEd95uC0kZGej7WaeYtBxHzEWavPWzVl5Bz6DOxdnq+WMEe1tJ/374t8MIg8X8U+kXtH/618MIpatt9043vWeh428gJ7V7+8V9XQN3rFHQVGkO993jt6hmKW9A9GUcv2np73khp6Cowk9gV7OHxmDwcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgJcbKDJSYA==
+  </data>
+ </layer>
+</map>

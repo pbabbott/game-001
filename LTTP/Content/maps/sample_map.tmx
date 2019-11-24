@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="master-bg" tilewidth="16" tileheight="16" tilecount="5568">
+  <image source="master-bg.png" trans="ffffff" width="1550" height="930"/>
+  <terraintypes>
+   <terrain name="dirt" tile="-1"/>
+   <terrain name="brick path" tile="-1"/>
+   <terrain name="light brick path" tile="-1"/>
+   <terrain name="hedge" tile="-1"/>
+  </terraintypes>
+  <tile id="879" terrain=",,,3"/>
+  <tile id="880" terrain=",,3,3"/>
+  <tile id="881" terrain=",,3,3"/>
+  <tile id="882" terrain=",,3,"/>
+  <tile id="975" terrain=",3,,3"/>
+  <tile id="976" terrain="3,3,3,3"/>
+  <tile id="977" terrain="3,3,3,3"/>
+  <tile id="978" terrain="3,,3,"/>
+  <tile id="980" terrain=",3,3,3"/>
+  <tile id="981" terrain="3,,3,3"/>
+  <tile id="1071" terrain=",3,,3"/>
+  <tile id="1072" terrain="3,3,3,3"/>
+  <tile id="1073" terrain="3,3,3,3"/>
+  <tile id="1074" terrain="3,,3,"/>
+  <tile id="1076" terrain="3,3,,3"/>
+  <tile id="1077" terrain="3,3,3,"/>
+  <tile id="1154" terrain=",,,1"/>
+  <tile id="1155" terrain=",,1,1"/>
+  <tile id="1156" terrain=",,1,"/>
+  <tile id="1167" terrain=",3,,"/>
+  <tile id="1168" terrain="3,3,,"/>
+  <tile id="1169" terrain="3,3,,"/>
+  <tile id="1170" terrain="3,,,"/>
+  <tile id="1250" terrain=",1,,1"/>
+  <tile id="1251" terrain="1,1,1,1"/>
+  <tile id="1252" terrain="1,,1,"/>
+  <tile id="1346" terrain=",1,,"/>
+  <tile id="1347" terrain="1,1,,"/>
+  <tile id="1348" terrain="1,,,"/>
+  <tile id="1442" terrain=",,,2"/>
+  <tile id="1443" terrain=",,2,2"/>
+  <tile id="1444" terrain=",,2,"/>
+  <tile id="1538" terrain=",2,,2"/>
+  <tile id="1539" terrain="2,2,2,2"/>
+  <tile id="1540" terrain="2,,2,"/>
+  <tile id="1634" terrain=",2,,"/>
+  <tile id="1635" terrain="2,2,,"/>
+  <tile id="1636" terrain="2,,,"/>
+  <tile id="1730" terrain=",,,0"/>
+  <tile id="1731" terrain=",,0,0"/>
+  <tile id="1732" terrain=",,0,"/>
+  <tile id="1826" terrain=",0,,0"/>
+  <tile id="1827" terrain="0,0,0,0"/>
+  <tile id="1828" terrain="0,,0,"/>
+  <tile id="1922" terrain=",0,,"/>
+  <tile id="1923" terrain="0,0,,"/>
+  <tile id="1924" terrain="0,,,"/>
+  <tile id="2018" terrain=",0,0,0"/>
+  <tile id="2019" terrain="0,,0,0"/>
+  <tile id="2114" terrain="0,0,,0"/>
+  <tile id="2115" terrain="0,0,0,"/>
+ </tileset>
+ <layer name="bg" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJztwwENAAAMw6BqnX8Rt3ABkLBqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqPB9WL0/Y=
+  </data>
+ </layer>
+ <layer name="terrain" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJzt3FFu00AQBmBLiRruUXhvjcoF4EClHCHwXuBIhfc2CC4AByFWs8pkmaVBKm3sfp+0iojqkIf9M7Ne210HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABw/66Ouu5LGF+PHvsbwWEYsvFz0XXPw/i1kBHIshEz8hC1RO3iUB2HPLx51nXv16+vnz1sLTlWuzhQcW6+WNy+t1z8mZP/OWfrfMTvAo9pGXJQz8llkpG7+p+sV6rfq0fW3w3fJTtOXeGhXFXzM/vNrjMS/y6bv9k6v7W+iaPu7VrHqSv8T1eNuTzMzw+NuVf3W6WO7DPvswzEUdeurNeKx7W+I9yH1vzbZ95lx7bmfTay/6N8Zlz7xHq173eD+3CczOl959/yH+b9v36f2Dct7+mzYR9ZT3UoffxSDnhErf2/Q8kHPLSsXtRrBL/XPDX1+Vr1Arbq80vOi8JWfW5KJuDW1QGem4LH1NoLlw+euuy8rb6KqTufdd3FerzdjIvNeDfb/bvsvg25YGrOQwaGPHxfj9N51/XrcTO7HcO/v/0lH/oppuY85KFkYBWycTrfvjeMl/Pd4+WDKcpy0W9y0M+3YxUy82r9+lk+mLCYi1WVi1IrbmbbejFk4tN6fKyyke2RywdjdxLycFNl4ibkIctElO2RW5czdifz3TVGycTHTSZaeSjquuGcFVNyPdtdW2RrikHrWQb1Xoeeiim5XGfhbL7trerzUUXrHlZ7HUzZ+WZtXvY1XiZr7n2eeRDrRlnzZ/uHMCb1+vxHmNN31YxWPkrPlu2PwJhcz7bnqsoaveyJZ8+Yaj0L59di+5y00rP1f+nXYAzKb/1pYw2SPYO2fm5gvSdYejb1g7Er53f78Bp7rKyG1H1VvP9pWJ+fhLzJB2NWeqHVbHcPZN+MDPXkZ8hGqR3ywVTUPVaf1JG71uqxr+rD58gHY1fW6GUfPbt+vfWMwjJiNobjyh78XfvvcOguN3P5LFxr0oc+q74fKt4rVd4v1/2WY+v7QmDs6rVIvBcq9lz1vSGrUDda94XAFNTXm/RJTYl56Oe7Wenn7Wu4YApOqvs/snsH+yozJRf7XPMLY3YZ7vc4C/O/5CPeI/UpDLngqYnXZ6kPsCvWErkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACD6DY67S1s=
+  </data>
+ </layer>
+ <layer name="details" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJzt2kluE0EABdCKE+cCIUzngRXsGAxcAW4TpmTHGZIwXQHEKWAFO2ZW/Mi00iq18EDkJp33pC+rLcuuhb+rytWlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADA6fdkrZSnyW6yt9b3aKBfO+nAw+RR8jj5nvxIfia//vTj40Ypnzb6HSf04XM68CX5mnxLJqNS7iR3k3uj6WuujUu5Pu53nNCHG+nAzeRWcjt5kbxMXiWvR32PDlarXk/tpwMHyWHyPLmwXsrF5FJyeX25z9jPXHOQHJpzOGXq9dRWOnAu2U7Od/Th2WiaRWxt5j2T7c2TGTOsSr2eqjV9mIyPH4+8W+0woRf1eupIuw+LzhV6w5DU66mmE01HJgvuGZbpFPzP2ucZ7TVU2/vsTT785XywmW9gaOrzjK7v+ZU8d7X1fN2hdq+cHzJk884D97Mee9DxH5fzQ4ak/r2fdw/xJt1429EP8wdD0v693/mHexCbTpk/GKrmvLAx717d3oOzoH1euAxzB0PWdV4ITM26/wo4Vt/fPusazpL6/vZZ1wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcJJ+A+uMXE8=
+  </data>
+ </layer>
+ <layer name="fg details" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJzt1bkNwlAQBNC1ZVfHkQBt0AhHM0BVHAmQsylGlsNv5PekCTabZLQRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMCUPJuIV+bdlG4C47NqI9aZTVu6CYyPfUA/+4B+9gH9TrmLc+ZiH0zEtnQB+EN2AwAAAABQxq6K2GcOmWNVug2MyzU3ccvcMw/7gC+zOmKeWWSW9e8/GbphSrr/ZOiGKen+k6EbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoLQPT5smtA==
+  </data>
+ </layer>
+ <layer name="collision" width="200" height="200">
+  <data encoding="base64" compression="zlib">
+   eJzt21sKgzAUQEFb7P63XAoVgpiQq5aSmxkQvxL86CHx0WUBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGayfs+vv14F/Mbnd/04ONbWoII+yOSohdrRQx9kUFsn9MHMok3YXzGDs11E2lgWfTCmM01E9lUbfTCiSA/7e45oIzCa3iaic0IGdz6j2s8Jo7uriXKu/TNiGFVrf9Uz9mgufZDFlT7K8SV9kMXV+w59kFmti+eF+fRBFq3vrbZGInut7awPsmjtryLryLMyB4zsjncftTb0weh63xFu60mrBV2Q1Zn/fuiDmdzVSOTbdxiJNqDOngr66ADqdAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQM0bOv0B1A==
+  </data>
+ </layer>
+</map>
