@@ -105,7 +105,7 @@ namespace Nez
 			get => Transform.ChildCount;
 		}
 
-		public Vector2 Position
+        public Vector2 Position
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => Transform.Position;

@@ -3,7 +3,7 @@ using Nez;
 using Nez.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-
+using LTTP.Scenes.SimpleMap.Link;
 
 namespace LTTP.Scenes.SimpleMap
 {
@@ -23,7 +23,7 @@ namespace LTTP.Scenes.SimpleMap
             var map = Content.LoadTiledMap("Content/maps/sample_map.tmx");
             
             var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map, "collision"));
-            tiledMapRenderer.SetLayersToRender(new[] { "bg", "terrain", "details" });
+            tiledMapRenderer.SetLayersToRender(new[] { "bg", "terrain", "details", "collision" });
 
             // render below/behind everything else. our player is at 0 and projectile is at 1.
             tiledMapRenderer.RenderLayer = 10;
@@ -33,7 +33,7 @@ namespace LTTP.Scenes.SimpleMap
             var tiledMapDetailsComp = tiledEntity.AddComponent(new TiledMapRenderer(map));
             tiledMapDetailsComp.SetLayerToRender("fg details");
             tiledMapDetailsComp.RenderLayer = -1;
-
+            
             // the details layer will write to the stencil buffer so we can draw a shadow when the player is behind it. we need an AlphaTestEffect
             // here as well
             tiledMapDetailsComp.Material = Material.StencilWrite();
@@ -45,9 +45,20 @@ namespace LTTP.Scenes.SimpleMap
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
 
 
-            var playerEntity = CreateEntity("player", new Vector2(16 * 10, 16 * 100));
-            playerEntity.AddComponent(new Ninja());
+            var playerEntity = InitPlayer();
+
+            // add a component to have the Camera follow the player
+            Camera.Entity.AddComponent(new FollowCamera(playerEntity));
+
+        }
+
+        private Entity InitPlayer()
+        {
+            var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
+            //var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 50));
+            playerEntity.AddComponent(new LinkComponent());
             var collider = playerEntity.AddComponent<CircleCollider>();
+            collider.SetRadius(8);
 
             // we only want to collide with the tilemap, which is on the default layer 0
             Flags.SetFlagExclusive(ref collider.CollidesWithLayers, 0);
@@ -55,8 +66,9 @@ namespace LTTP.Scenes.SimpleMap
             // move ourself to layer 1 so that we dont get hit by the projectiles that we fire
             Flags.SetFlagExclusive(ref collider.PhysicsLayer, 1);
 
-            // add a component to have the Camera follow the player
-            Camera.Entity.AddComponent(new FollowCamera(playerEntity));
+            return playerEntity;
+
+            
         }
     }
 }

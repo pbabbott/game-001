@@ -21,7 +21,7 @@ namespace LTTP.Scenes.SimpleMap
 
         private SubpixelVector2 _subpixelV2 = new SubpixelVector2();
         private Mover _mover;
-        private float _moveSpeed = 200f;
+        private float _moveSpeed = 100f;
         private Vector2 _projectileVelocity = new Vector2(175);
 
         private VirtualButton _fireInput;
