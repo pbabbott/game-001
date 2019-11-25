@@ -71,10 +71,7 @@ namespace LTTP.Scenes.SimpleMap.Link
 
         private Direction GetWalkDirectionFromMovementVector(Vector2 moveDir)
         {
-            if (moveDir.Y > 0)
-            {
-                return Direction.Down;
-            }
+       
 
             if (moveDir.Y < 0)
             {
@@ -89,6 +86,10 @@ namespace LTTP.Scenes.SimpleMap.Link
             if (moveDir.X > 0)
             {
                 return Direction.Right;
+            }
+            if (moveDir.Y > 0)
+            {
+                return Direction.Down;
             }
 
             throw new ArgumentException("Cannot determine walk direction from zero movement vector");
@@ -133,8 +134,14 @@ namespace LTTP.Scenes.SimpleMap.Link
 
         void IUpdatable.Update()
         {
-            // handle movement and animations
+            
             var moveDir = new Vector2(_xAxisInput.Value, _yAxisInput.Value);
+
+            // Cut movement speed a little if moving in two directions at once.
+            if (moveDir.X != 0 && moveDir.Y != 0)
+            {
+                moveDir *= 0.75f;
+            }
 
             if (moveDir != Vector2.Zero)
             {
