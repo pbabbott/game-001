@@ -1,5 +1,4 @@
-﻿using LTTP.Scenes.SimpleMap.Link.Sprites;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
@@ -16,12 +15,19 @@ namespace LTTP.Scenes.SimpleMap.Link
         private float _moveSpeed = 100f;
         private SubpixelVector2 _subpixelV2 = new SubpixelVector2();
 
+        private VirtualButton _primaryAttackInput;
         private VirtualIntegerAxis _xAxisInput;
         private VirtualIntegerAxis _yAxisInput;
 
         private SpriteAtlas _spriteAtlas;
 
         private Direction _previousWalkDirection = Direction.Down;
+
+        public override void OnRemovedFromEntity()
+        {
+            // deregister virtual input
+            _primaryAttackInput.Deregister();
+        }
 
         public override void OnAddedToEntity()
         {
@@ -51,7 +57,7 @@ namespace LTTP.Scenes.SimpleMap.Link
 
             // New method for link sprites
             var texture = Entity.Scene.Content.Load<Texture2D>(Content.Characters.Link2);
-            ILinkSpriteAtlasFactory linkSprites = new LinkSpriteAtlasFactory(texture);
+            var linkSprites = new LinkSpriteAtlasFactory(texture);
             _spriteAtlas = linkSprites.GetSpriteAtlas();
 
 
@@ -60,6 +66,9 @@ namespace LTTP.Scenes.SimpleMap.Link
 
         private void SetupInput()
         {
+            _primaryAttackInput = new VirtualButton();
+            _primaryAttackInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
+
             // horizontal input from dpad, left stick or keyboard left/right
             _xAxisInput = new VirtualIntegerAxis();
             _xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.A, Keys.D));
@@ -71,26 +80,17 @@ namespace LTTP.Scenes.SimpleMap.Link
 
         private Direction GetWalkDirectionFromMovementVector(Vector2 moveDir)
         {
-       
-
             if (moveDir.Y < 0)
-            {
                 return Direction.Up;
-            }
 
             if (moveDir.X < 0)
-            {
                 return Direction.Left;
-            }
 
             if (moveDir.X > 0)
-            {
                 return Direction.Right;
-            }
+
             if (moveDir.Y > 0)
-            {
                 return Direction.Down;
-            }
 
             throw new ArgumentException("Cannot determine walk direction from zero movement vector");
         }
@@ -109,9 +109,7 @@ namespace LTTP.Scenes.SimpleMap.Link
             var bodyAnimation = GetAtlasNameFromDirection("BodyWalk", direction);
 
             if (_previousWalkDirection != direction)
-            {
                 _previousWalkDirection = direction;
-            }
 
             var spriteEffects = direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
@@ -122,6 +120,8 @@ namespace LTTP.Scenes.SimpleMap.Link
                 _bodyAnimator.Play(bodyAnimation);
             else
                 _bodyAnimator.UnPause();
+
+
         }
 
         private void AnimateStand()
@@ -135,13 +135,16 @@ namespace LTTP.Scenes.SimpleMap.Link
         void IUpdatable.Update()
         {
             
+            if (_primaryAttackInput.IsPressed)
+            {
+                _bodyAnimator.Play("BodyAttackRight", SpriteAnimator.LoopMode.ClampForever);
+            }
+
             var moveDir = new Vector2(_xAxisInput.Value, _yAxisInput.Value);
 
             // Cut movement speed a little if moving in two directions at once.
             if (moveDir.X != 0 && moveDir.Y != 0)
-            {
                 moveDir *= 0.75f;
-            }
 
             if (moveDir != Vector2.Zero)
             {
@@ -156,7 +159,7 @@ namespace LTTP.Scenes.SimpleMap.Link
             else
             {
                 //_bodyAnimator.Pause();
-                AnimateStand();
+                //AnimateStand();
             }
         }
 

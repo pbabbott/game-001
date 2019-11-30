@@ -4,6 +4,7 @@ using Nez.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using LTTP.Scenes.SimpleMap.Link;
+using Nez.PhysicsShapes;
 
 namespace LTTP.Scenes.SimpleMap
 {
@@ -48,17 +49,23 @@ namespace LTTP.Scenes.SimpleMap
             var playerEntity = InitPlayer();
 
             // add a component to have the Camera follow the player
+
+            Camera.ZoomIn(0.5f);
+            
             Camera.Entity.AddComponent(new FollowCamera(playerEntity));
 
         }
 
         private Entity InitPlayer()
         {
+            Core.DebugRenderEnabled = true;
+
+            var collisionRadius = 7.0f;
             var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
             //var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 50));
             playerEntity.AddComponent(new LinkComponent());
             var collider = playerEntity.AddComponent<CircleCollider>();
-            collider.SetRadius(8);
+            collider.SetRadius(collisionRadius);
 
             // we only want to collide with the tilemap, which is on the default layer 0
             Flags.SetFlagExclusive(ref collider.CollidesWithLayers, 0);
