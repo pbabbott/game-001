@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using LTTP.Scenes.SimpleMap.Link;
 using Nez.PhysicsShapes;
+using LTTP.Sprites;
 
 namespace LTTP.Scenes.SimpleMap
 {
@@ -34,7 +35,7 @@ namespace LTTP.Scenes.SimpleMap
             // render our above-details layer after the player so the player is occluded by it when walking behind things
             var tiledMapDetailsComp = tiledEntity.AddComponent(new TiledMapRenderer(map));
             tiledMapDetailsComp.SetLayerToRender("fg details");
-            tiledMapDetailsComp.RenderLayer = -1;
+            tiledMapDetailsComp.RenderLayer = -10;
             
             // the details layer will write to the stencil buffer so we can draw a shadow when the player is behind it. we need an AlphaTestEffect
             // here as well
@@ -50,9 +51,7 @@ namespace LTTP.Scenes.SimpleMap
             var playerEntity = InitPlayer();
 
             // add a component to have the Camera follow the player
-
-            Camera.ZoomIn(0.5f);
-            
+            //Camera.ZoomIn(0.5f);
             Camera.Entity.AddComponent(new FollowCamera(playerEntity));
 
         }
@@ -60,14 +59,24 @@ namespace LTTP.Scenes.SimpleMap
         private Entity InitPlayer()
         {
             //Core.DebugRenderEnabled = true;
-            
 
+            // Create an atlas of sprites using the link2 texture
+            var texture = Content.Load<Texture2D>(Nez.Content.Characters.Link2);
+            var linkSpriteAtlasFactory = new LinkSpriteAtlasFactory(texture);
+
+            // Add the player to the scene with its own collider
             var collisionRadius = 7.0f;
             var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
-            //var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 50));
-            playerEntity.AddComponent(new LinkComponent());
+            var bodySpriteAtlas = linkSpriteAtlasFactory.GetBodySpriteAtlas();
+            playerEntity.AddComponent(new LinkComponent(bodySpriteAtlas));
             var collider = playerEntity.AddComponent<CircleCollider>();
             collider.SetRadius(collisionRadius);
+
+            // Add the sword to the scene with its own collider
+            var swordEntity = CreateEntity("sword");
+            var swordSpriteAtlas = linkSpriteAtlasFactory.GetSwordSpriteAtlas();
+            swordEntity.AddComponent(new SwordComponent(playerEntity, swordSpriteAtlas));
+            
 
             // we only want to collide with the tilemap, which is on the default layer 0
             Flags.SetFlagExclusive(ref collider.CollidesWithLayers, 0);
@@ -76,8 +85,8 @@ namespace LTTP.Scenes.SimpleMap
             Flags.SetFlagExclusive(ref collider.PhysicsLayer, 1);
 
             return playerEntity;
-
-            
         }
+
+        
     }
 }

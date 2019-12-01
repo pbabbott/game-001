@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using Nez;
 using Nez.Sprites;
 using Nez.Textures;
 using System.Linq;
 
-namespace LTTP.Scenes.SimpleMap.Link
+namespace LTTP.Sprites
 {
     public class LinkSpriteAtlasFactory
     {
-        public static float frameRate = 10f;
+        public static float frameRate = 15f;
         public static float attackFrameRate = frameRate * 1.5f;
 
         private Texture2D texture;
@@ -17,25 +18,43 @@ namespace LTTP.Scenes.SimpleMap.Link
             this.texture = texture;
         }
 
-        public SpriteAtlas GetSpriteAtlas()
+        public SpriteAtlas GetSwordSpriteAtlas()
         {
-            var namedAnimations = new NamedSpriteAnimation[]
-            {
-                BodyWalkRight,
-                BodyWalkDown,
-                BodyWalkUp,
-                BodyAttackDown,
-                BodyAttackRight,
-                BodyAttackUp
-            };
+            return CreateSpriteAtlas(
+               new NamedSpriteAnimation[]
+               {
+                    SwordAttack
+               },
+               new NamedSprite[]
+               {
+                    SwordHeld
+               });
 
-            var namedSprites = new NamedSprite[]
-            {
-                BodyStandUp,
-                BodyStandRight,
-                BodyStandDown,
-            };
+        }
 
+        public SpriteAtlas GetBodySpriteAtlas()
+        {
+            return CreateSpriteAtlas(
+                new NamedSpriteAnimation[]
+                {
+                    BodyWalkDownEmptyHanded,
+
+                    BodyWalkRight,
+                    BodyWalkUp,
+                    BodyAttackDown,
+                    BodyAttackRight,
+                    BodyAttackUp
+                },
+                new NamedSprite[]
+                {
+                    BodyStandUp,
+                    BodyStandRight,
+                    BodyStandDown,
+                });
+        }
+
+        private static SpriteAtlas CreateSpriteAtlas(NamedSpriteAnimation[] namedAnimations, NamedSprite[] namedSprites)
+        {
             return new SpriteAtlas()
             {
                 AnimationNames = namedAnimations.Select(x => x.Name).ToArray(),
@@ -61,6 +80,15 @@ namespace LTTP.Scenes.SimpleMap.Link
 
         public int StartX = 1;
 
+        public static string GetAtlasNameFromDirection(string prefix, Direction d)
+        {
+            if (d == Direction.Left)
+                return prefix + Direction.Right.ToString();
+
+            return prefix + d.ToString();
+        }
+
+
         public NamedSprite BodyStandDown => new NamedSprite("BodyStandDown",
             new Sprite(texture, StartX, RowY[0], DefaultWidth, DefaultHeight));
 
@@ -70,7 +98,7 @@ namespace LTTP.Scenes.SimpleMap.Link
         public NamedSprite BodyStandUp => new NamedSprite("BodyStandUp",
             new Sprite(texture, StartX, RowY[4], DefaultWidth, DefaultHeight));
 
-        public NamedSpriteAnimation BodyWalkDown => new NamedSpriteAnimation("BodyWalkDown",
+        public NamedSpriteAnimation BodyWalkDownEmptyHanded => new NamedSpriteAnimation("BodyWalkDown",
           new SpriteAnimation(
               new Sprite[]
               {
@@ -153,5 +181,22 @@ namespace LTTP.Scenes.SimpleMap.Link
                     new Sprite(texture, 86, RowY[5], DefaultWidth, DefaultHeight),
                 },
                 attackFrameRate));
+
+        public NamedSprite SwordHeld => new NamedSprite("SwordHeld",
+            new Sprite(texture, StartX, 269, 8, 16));
+
+        public NamedSpriteAnimation SwordAttack => new NamedSpriteAnimation("SwordAttack",
+            new SpriteAnimation(
+                new Sprite[]
+                {
+                    new Sprite(texture, 10, 269, 8, 16),
+                    new Sprite(texture, 19, 269, 8, 16),
+                    new Sprite(texture, 28, 269, 16, 16),
+                    new Sprite(texture, 45, 269, 16, 16),
+                    new Sprite(texture, 62, 277, 16, 8),
+                    new Sprite(texture, 79, 277, 16, 8),
+                },
+                attackFrameRate));
+
     }
 }

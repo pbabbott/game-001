@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LTTP.Sprites;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
@@ -20,9 +21,16 @@ namespace LTTP.Scenes.SimpleMap.Link
         private LinkStateFactory _linkStateFactory;
 
         [Inspectable]
-        private LinkAction Action = LinkAction.Standing;
+        public LinkAction Action { get; private set; } = LinkAction.Standing;
+
+        public Direction Direction { get; private set; } = Direction.Down;
 
         private SpriteAtlas _spriteAtlas;
+
+        public LinkComponent(SpriteAtlas spriteAtlas)
+        {
+            _spriteAtlas = spriteAtlas;
+        }
 
         public override void OnRemovedFromEntity()
         {
@@ -41,32 +49,16 @@ namespace LTTP.Scenes.SimpleMap.Link
             var shadow = Entity.AddComponent(new SpriteMime(Entity.GetComponent<SpriteRenderer>()));
             shadow.Color = new Color(10, 10, 10, 80);
             shadow.Material = Material.StencilRead();
+            shadow.RenderLayer = -11; // ABOVE our tiled map layer so it is visible
 
-            // ABOVE our tiledmap layer so it is visible
-            shadow.RenderLayer = -2;
-
-            SetupAnimations();
+            _bodyAnimator.AddAnimationsFromAtlas(_spriteAtlas);
 
             SetupInput();
 
             _linkStateFactory = new LinkStateFactory(_primaryAttackInput, _bodyAnimator);
         }
 
-        private void SetupAnimations()
-        {
-            // Method 1 for getting link sprites
-            //var texture = Entity.Scene.Content.Load<Texture2D>(Content.Characters.Link);
-            //ILinkSpriteAtlasFactory linkSprites = new LinkSprites(texture);
-            //_spriteAtlas = linkSprites.GetSpriteAtlas();
-
-            // New method for link sprites
-            var texture = Entity.Scene.Content.Load<Texture2D>(Content.Characters.Link2);
-            var linkSprites = new LinkSpriteAtlasFactory(texture);
-            _spriteAtlas = linkSprites.GetSpriteAtlas();
-
-            _bodyAnimator.AddAnimationsFromAtlas(_spriteAtlas);
-        }
-
+     
         private void SetupInput()
         {
             _primaryAttackInput = new VirtualButton();
@@ -81,18 +73,12 @@ namespace LTTP.Scenes.SimpleMap.Link
             _yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W, Keys.S));
         }
 
-        private string GetAtlasNameFromDirection(string prefix, Direction d)
-        {
-            if (d == Direction.Left)
-                return prefix + Direction.Right.ToString();
+       
 
-            return prefix + d.ToString();
-        }
-
-        private void AnimateWalk(Direction direction)
+        private void AnimateWalk()
         {
-            var bodyAnimation = GetAtlasNameFromDirection("BodyWalk", direction);
-            var spriteEffects = direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            var bodyAnimation = LinkSpriteAtlasFactory.GetAtlasNameFromDirection("BodyWalk", Direction);
+            var spriteEffects = Direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             _bodyAnimator.SpriteEffects = spriteEffects;
 
             if (_bodyAnimator.IsAnimationActive(bodyAnimation))
@@ -101,27 +87,28 @@ namespace LTTP.Scenes.SimpleMap.Link
                 _bodyAnimator.Play(bodyAnimation);
         }
 
-        private void AnimateAttack(Direction direction)
+        private void AnimateAttack()
         {
-            var bodyAnimation = GetAtlasNameFromDirection("BodyAttack", direction);
-            var spriteEffects = direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            var bodyAnimation = LinkSpriteAtlasFactory.GetAtlasNameFromDirection("BodyAttack", Direction);
+            var spriteEffects = Direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             _bodyAnimator.SpriteEffects = spriteEffects;
 
 
             if (_bodyAnimator.IsAnimationActive(bodyAnimation))
                 _bodyAnimator.UnPause();
             else
-                _bodyAnimator.Play(bodyAnimation, SpriteAnimator.LoopMode.Once);
+                _bodyAnimator.Play(bodyAnimation, SpriteAnimator.LoopMode.ClampForever);
 
         }
 
-        private void AnimateStand(Direction direction)
+        private void AnimateStand()
         {
             //_bodyAnimator.Stop();
-            var standSpriteName = GetAtlasNameFromDirection("BodyStand", direction);
+            var standSpriteName = LinkSpriteAtlasFactory.GetAtlasNameFromDirection("BodyStand", Direction);
             var standSprite = _spriteAtlas.GetSprite(standSpriteName);
             _bodyAnimator.SetSprite(standSprite);
         }
+        
 
         void IUpdatable.Update()
         {
@@ -131,8 +118,9 @@ namespace LTTP.Scenes.SimpleMap.Link
             var previousAction = previousState.Action;
             var state = _linkStateFactory.GetNextState(movementVector);
             Action = state.Action;
+            Direction = state.Direction;
 
-            if (state.Action == LinkAction.Standing)
+            if (Action == LinkAction.Standing)
             {
                 if (previousAction == LinkAction.Walking)
                     _bodyAnimator.Pause();
@@ -140,45 +128,32 @@ namespace LTTP.Scenes.SimpleMap.Link
                 if (previousAction == LinkAction.Attacking)
                     _bodyAnimator.Stop();
 
-                AnimateStand(state.Direction);
+                AnimateStand();
             }
-            if (state.Action == LinkAction.Walking)
+          
+            if (Action == LinkAction.Attacking)
             {
-                AnimateWalk(state.Direction);
+                AnimateAttack();
             }
-            if (state.Action == LinkAction.Attacking)
+
+            if (Action == LinkAction.Walking)
             {
-                AnimateAttack(state.Direction);
+                AnimateWalk();
+
+                // Cut movement speed a little if moving in two directions at once.
+                if (movementVector.X != 0 && movementVector.Y != 0)
+                    movementVector *= 0.75f;
+
+                if (movementVector != Vector2.Zero)
+                {
+                    var movement = movementVector * _moveSpeed * Time.DeltaTime;
+
+                    _mover.CalculateMovement(ref movement, out var res);
+                    _subpixelV2.Update(ref movement);
+                    _mover.ApplyMovement(movement);
+                }
             }
 
-                
-
-            // Set "previous" state at the end so it will be available next time
-
-            //if (_primaryAttackInput.IsPressed)
-            //{
-            //    _bodyAnimator.Play("BodyAttackRight", SpriteAnimator.LoopMode.ClampForever);
-            //}
-
-            //// Cut movement speed a little if moving in two directions at once.
-            //if (moveDir.X != 0 && moveDir.Y != 0)
-            //    moveDir *= 0.75f;
-
-            //if (moveDir != Vector2.Zero)
-            //{
-            //    AnimateWalk(moveDir);
-
-            //    var movement = moveDir * _moveSpeed * Time.DeltaTime;
-
-            //    _mover.CalculateMovement(ref movement, out var res);
-            //    _subpixelV2.Update(ref movement);
-            //    _mover.ApplyMovement(movement);
-            //}
-            //else
-            //{
-            //    //_bodyAnimator.Pause();
-            //    //AnimateStand();
-            //}
         }
 
         void ITriggerListener.OnTriggerEnter(Collider other, Collider self)
