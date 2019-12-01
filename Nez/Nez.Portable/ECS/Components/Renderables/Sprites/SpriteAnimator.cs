@@ -59,6 +59,7 @@ namespace Nez.Sprites
 		/// <summary>
 		/// the current state of the animation
 		/// </summary>
+        [Inspectable]
 		public State AnimationState { get; private set; } = State.None;
 
 		/// <summary>

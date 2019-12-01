@@ -48,8 +48,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\SimpleMap\CameraBounds.cs" />
     <Compile Include="Scenes\SimpleMap\Link\LinkComponent.cs" />
-    <Compile Include="Scenes\SimpleMap\Link\Sprites\LinkColor.cs" />
-    <Compile Include="Scenes\SimpleMap\Link\Sprites\LinkSpriteAtlasFactory.cs" />
+    <Compile Include="Scenes\SimpleMap\Link\LinkSpriteAtlasFactory.cs" />
+    <Compile Include="Scenes\SimpleMap\Link\LinkStateFactory.cs" />
     <Compile Include="Scenes\SimpleMap\Link\NamedAnimation.cs" />
     <Compile Include="Scenes\SimpleMap\Link\NamedSprite.cs" />
     <Compile Include="Scenes\SimpleMap\Ninja.cs" />

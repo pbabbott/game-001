@@ -26,6 +26,7 @@ namespace LTTP.Scenes.SimpleMap.Link
                 BodyWalkUp,
                 BodyAttackDown,
                 BodyAttackRight,
+                BodyAttackUp
             };
 
             var namedSprites = new NamedSprite[]
@@ -54,7 +55,8 @@ namespace LTTP.Scenes.SimpleMap.Link
             32,
             58,
             85,
-            111
+            111,
+            141
         };
 
         public int StartX = 1;
@@ -138,5 +140,18 @@ namespace LTTP.Scenes.SimpleMap.Link
                     new Sprite(texture, 101, RowY[3], DefaultWidth, DefaultHeight-1),
               },
               attackFrameRate));
+
+        public NamedSpriteAnimation BodyAttackUp => new NamedSpriteAnimation("BodyAttackUp",
+            new SpriteAnimation(
+                new Sprite[]
+                {
+                    new Sprite(texture, StartX, RowY[5], DefaultWidth, DefaultHeight),
+                    new Sprite(texture, 18, RowY[5]-1, DefaultWidth, DefaultHeight+1),
+                    new Sprite(texture, 35, RowY[5]-2, DefaultWidth, DefaultHeight+2),
+                    new Sprite(texture, 52, RowY[5]-5, DefaultWidth, DefaultHeight+5),
+                    new Sprite(texture, 69, RowY[5]-2, DefaultWidth, DefaultHeight+2),
+                    new Sprite(texture, 86, RowY[5], DefaultWidth, DefaultHeight),
+                },
+                attackFrameRate));
     }
 }

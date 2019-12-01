@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
-using System;
 
 namespace LTTP.Scenes.SimpleMap.Link
 {
@@ -18,10 +17,12 @@ namespace LTTP.Scenes.SimpleMap.Link
         private VirtualButton _primaryAttackInput;
         private VirtualIntegerAxis _xAxisInput;
         private VirtualIntegerAxis _yAxisInput;
+        private LinkStateFactory _linkStateFactory;
+
+        [Inspectable]
+        private LinkAction Action = LinkAction.Standing;
 
         private SpriteAtlas _spriteAtlas;
-
-        private Direction _previousWalkDirection = Direction.Down;
 
         public override void OnRemovedFromEntity()
         {
@@ -32,6 +33,7 @@ namespace LTTP.Scenes.SimpleMap.Link
         public override void OnAddedToEntity()
         {
             _bodyAnimator = Entity.AddComponent<SpriteAnimator>();
+            //_bodyAnimator.Speed = 0.2f;
             _mover = Entity.AddComponent(new Mover());
 
             // add a shadow that will only be rendered when our player is behind the details layer of the tilemap (RenderLayer -1). The shadow
@@ -46,6 +48,8 @@ namespace LTTP.Scenes.SimpleMap.Link
             SetupAnimations();
 
             SetupInput();
+
+            _linkStateFactory = new LinkStateFactory(_primaryAttackInput, _bodyAnimator);
         }
 
         private void SetupAnimations()
@@ -59,7 +63,6 @@ namespace LTTP.Scenes.SimpleMap.Link
             var texture = Entity.Scene.Content.Load<Texture2D>(Content.Characters.Link2);
             var linkSprites = new LinkSpriteAtlasFactory(texture);
             _spriteAtlas = linkSprites.GetSpriteAtlas();
-
 
             _bodyAnimator.AddAnimationsFromAtlas(_spriteAtlas);
         }
@@ -78,23 +81,6 @@ namespace LTTP.Scenes.SimpleMap.Link
             _yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W, Keys.S));
         }
 
-        private Direction GetWalkDirectionFromMovementVector(Vector2 moveDir)
-        {
-            if (moveDir.Y < 0)
-                return Direction.Up;
-
-            if (moveDir.X < 0)
-                return Direction.Left;
-
-            if (moveDir.X > 0)
-                return Direction.Right;
-
-            if (moveDir.Y > 0)
-                return Direction.Down;
-
-            throw new ArgumentException("Cannot determine walk direction from zero movement vector");
-        }
-
         private string GetAtlasNameFromDirection(string prefix, Direction d)
         {
             if (d == Direction.Left)
@@ -103,64 +89,96 @@ namespace LTTP.Scenes.SimpleMap.Link
             return prefix + d.ToString();
         }
 
-        private void AnimateWalk(Vector2 moveDir)
+        private void AnimateWalk(Direction direction)
         {
-            var direction = GetWalkDirectionFromMovementVector(moveDir);
             var bodyAnimation = GetAtlasNameFromDirection("BodyWalk", direction);
-
-            if (_previousWalkDirection != direction)
-                _previousWalkDirection = direction;
-
             var spriteEffects = direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-            var walkDirection = GetWalkDirectionFromMovementVector(moveDir);
             _bodyAnimator.SpriteEffects = spriteEffects;
 
-            if (!_bodyAnimator.IsAnimationActive(bodyAnimation))
-                _bodyAnimator.Play(bodyAnimation);
-            else
+            if (_bodyAnimator.IsAnimationActive(bodyAnimation))
                 _bodyAnimator.UnPause();
+            else
+                _bodyAnimator.Play(bodyAnimation);
+        }
 
+        private void AnimateAttack(Direction direction)
+        {
+            var bodyAnimation = GetAtlasNameFromDirection("BodyAttack", direction);
+            var spriteEffects = direction == Direction.Left ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            _bodyAnimator.SpriteEffects = spriteEffects;
+
+
+            if (_bodyAnimator.IsAnimationActive(bodyAnimation))
+                _bodyAnimator.UnPause();
+            else
+                _bodyAnimator.Play(bodyAnimation, SpriteAnimator.LoopMode.Once);
 
         }
 
-        private void AnimateStand()
+        private void AnimateStand(Direction direction)
         {
-            _bodyAnimator.Pause();
-            var standSpriteName = GetAtlasNameFromDirection("BodyStand", _previousWalkDirection);
+            //_bodyAnimator.Stop();
+            var standSpriteName = GetAtlasNameFromDirection("BodyStand", direction);
             var standSprite = _spriteAtlas.GetSprite(standSpriteName);
             _bodyAnimator.SetSprite(standSprite);
         }
 
         void IUpdatable.Update()
         {
-            
-            if (_primaryAttackInput.IsPressed)
+            var movementVector = new Vector2(_xAxisInput.Value, _yAxisInput.Value);
+
+            var previousState = _linkStateFactory.PreviousState;
+            var previousAction = previousState.Action;
+            var state = _linkStateFactory.GetNextState(movementVector);
+            Action = state.Action;
+
+            if (state.Action == LinkAction.Standing)
             {
-                _bodyAnimator.Play("BodyAttackRight", SpriteAnimator.LoopMode.ClampForever);
+                if (previousAction == LinkAction.Walking)
+                    _bodyAnimator.Pause();
+
+                if (previousAction == LinkAction.Attacking)
+                    _bodyAnimator.Stop();
+
+                AnimateStand(state.Direction);
+            }
+            if (state.Action == LinkAction.Walking)
+            {
+                AnimateWalk(state.Direction);
+            }
+            if (state.Action == LinkAction.Attacking)
+            {
+                AnimateAttack(state.Direction);
             }
 
-            var moveDir = new Vector2(_xAxisInput.Value, _yAxisInput.Value);
+                
 
-            // Cut movement speed a little if moving in two directions at once.
-            if (moveDir.X != 0 && moveDir.Y != 0)
-                moveDir *= 0.75f;
+            // Set "previous" state at the end so it will be available next time
 
-            if (moveDir != Vector2.Zero)
-            {
-                AnimateWalk(moveDir);
+            //if (_primaryAttackInput.IsPressed)
+            //{
+            //    _bodyAnimator.Play("BodyAttackRight", SpriteAnimator.LoopMode.ClampForever);
+            //}
 
-                var movement = moveDir * _moveSpeed * Time.DeltaTime;
+            //// Cut movement speed a little if moving in two directions at once.
+            //if (moveDir.X != 0 && moveDir.Y != 0)
+            //    moveDir *= 0.75f;
 
-                _mover.CalculateMovement(ref movement, out var res);
-                _subpixelV2.Update(ref movement);
-                _mover.ApplyMovement(movement);
-            }
-            else
-            {
-                //_bodyAnimator.Pause();
-                //AnimateStand();
-            }
+            //if (moveDir != Vector2.Zero)
+            //{
+            //    AnimateWalk(moveDir);
+
+            //    var movement = moveDir * _moveSpeed * Time.DeltaTime;
+
+            //    _mover.CalculateMovement(ref movement, out var res);
+            //    _subpixelV2.Update(ref movement);
+            //    _mover.ApplyMovement(movement);
+            //}
+            //else
+            //{
+            //    //_bodyAnimator.Pause();
+            //    //AnimateStand();
+            //}
         }
 
         void ITriggerListener.OnTriggerEnter(Collider other, Collider self)

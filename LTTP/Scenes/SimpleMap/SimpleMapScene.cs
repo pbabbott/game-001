@@ -18,6 +18,7 @@ namespace LTTP.Scenes.SimpleMap
             // setup a pixel perfect screen that fits our map
             SetDesignResolution(512, 256, SceneResolutionPolicy.ShowAllPixelPerfect);
             Screen.SetSize(512 * 3, 256 * 3);
+            
 
             // load the TiledMap and display it with a TiledMapComponent
             var tiledEntity = CreateEntity("tiled-map-entity");
@@ -58,7 +59,8 @@ namespace LTTP.Scenes.SimpleMap
 
         private Entity InitPlayer()
         {
-            Core.DebugRenderEnabled = true;
+            //Core.DebugRenderEnabled = true;
+            
 
             var collisionRadius = 7.0f;
             var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
