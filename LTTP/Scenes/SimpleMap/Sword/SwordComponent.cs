@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Nez;
 using Microsoft.Xna.Framework.Graphics;
+using Nez;
 using Nez.Sprites;
-using LTTP.Sprites;
 
 namespace LTTP.Scenes.SimpleMap.Link
 {
@@ -11,8 +10,10 @@ namespace LTTP.Scenes.SimpleMap.Link
         private SpriteAnimator _animator;
         private Entity _player;
         private SpriteAtlas _spriteAtlas;
+
         [Inspectable]
         public int CurrentFrame { get; private set; }
+
         public SwordComponent(Entity player, SpriteAtlas spriteAtlas)
         {
             _player = player;
@@ -30,7 +31,6 @@ namespace LTTP.Scenes.SimpleMap.Link
             var animation = "SwordAttack";
             var layer = -1;
 
-
             if (direction == Direction.Down)
             {
                 layer = -1;
@@ -40,22 +40,24 @@ namespace LTTP.Scenes.SimpleMap.Link
             {
                 layer = 1;
                 _animator.SpriteEffects = SpriteEffects.FlipHorizontally;
-
             }
             else if (direction == Direction.Left)
             {
-                layer = -1;
+                layer = _animator.CurrentFrame < 3 ? 1 : -1;
                 _animator.SpriteEffects = SpriteEffects.FlipHorizontally;
             }
             else if (direction == Direction.Right)
             {
-                layer = -1;
+                layer = _animator.CurrentFrame < 3 ? 1 : -1;
                 _animator.SpriteEffects = SpriteEffects.None;
             }
 
-            if (!_animator.IsRunning)  
+            //_animator.SetLayerDepth(layer);
+            _animator.SetRenderLayer(layer);
+
+
+            if (!_animator.IsRunning)
             {
-                _animator.SetLayerDepth(layer);
                 _animator.Play(animation, SpriteAnimator.LoopMode.ClampForever);
             }
         }
@@ -66,68 +68,92 @@ namespace LTTP.Scenes.SimpleMap.Link
             var rotation = 0;
             CurrentFrame = _animator.CurrentFrame;
 
-            if (direction == Direction.Down)
+            if (direction == Direction.Down || direction == Direction.Up)
             {
                 if (CurrentFrame == 0)
                 {
                     rotation = 90;
-                    offset = new Vector2(-11, 2);
+                    offset = new Vector2(-10, 2);
                 }
-
                 if (CurrentFrame == 1)
                 {
-                    rotation = 45+23;
+                    rotation = 45 + 23;
                     offset = new Vector2(-5, 9);
                 }
-
                 if (CurrentFrame == 2)
                 {
                     rotation = 45;
                     offset = new Vector2(3, 12);
                 }
-
                 if (CurrentFrame == 3)
                 {
                     rotation = 45;
-                    offset = new Vector2(5, 14);
+                    offset = new Vector2(5, 15);
                 }
-
                 if (CurrentFrame == 4)
                 {
                     rotation = 11;
                     offset = new Vector2(8, 7);
                 }
-
                 if (CurrentFrame == 5)
                 {
                     rotation = 0;
                     offset = new Vector2(12, 2);
                 }
+                // Down is just the opposite of up!
+                if (direction == Direction.Up)
+                {
+                    offset *= new Vector2(-1, -1);
+                }
             }
 
-
-            if (direction == Direction.Up)
+            if (direction == Direction.Left || direction == Direction.Right)
             {
-                offset = new Vector2(-4, -12);
+                if (CurrentFrame == 0)
+                {
+                    rotation = 0;
+                    offset = new Vector2(4, -4);
+                }
+                else if (CurrentFrame == 1)
+                {
+                    rotation = 23;
+                    offset = new Vector2(9, -4);
+                }
+                else if (CurrentFrame == 2)
+                {
+                    rotation = 23;
+                    offset = new Vector2(13, 0);
+                }
+                else if (CurrentFrame == 3)
+                {
+                    rotation = 23;
+                    offset = new Vector2(16, 2);
+                }
+                else if (CurrentFrame == 4)
+                {
+                    rotation = 45+23;
+                    offset = new Vector2(10, 6);
+                }
+                else if (CurrentFrame == 5)
+                {
+                    rotation = 90;
+                    offset = new Vector2(2, 8);
+                    //offset = new Vector2(9, -4);
+                }
+             
+
+
+
+                if (direction == Direction.Left)
+                {
+                    rotation *= -1;
+                    offset *= new Vector2(-1, 1);
+                }
             }
-
-
-            if (direction == Direction.Left)
-            {
-                offset = new Vector2(-12, -2);
-            }
-
-
-            if (direction == Direction.Right)
-            {
-                offset = new Vector2(12, -2);
-            }
-
 
             Entity.SetRotationDegrees(rotation);
 
             Entity.SetPosition(linkPosition + offset);
-
         }
 
         void IUpdatable.Update()
@@ -139,7 +165,6 @@ namespace LTTP.Scenes.SimpleMap.Link
             {
                 Entity.SetPosition(-100, -100);
             }
-
 
             if (linkComponent.Action == LinkAction.Attacking)
             {
@@ -154,10 +179,7 @@ namespace LTTP.Scenes.SimpleMap.Link
                 var swordSprite = _spriteAtlas.GetSprite(spriteName);
                 _animator.SetSprite(swordSprite);
             }
-
         }
-
-    
 
         void ITriggerListener.OnTriggerEnter(Collider other, Collider self)
         {

@@ -8,7 +8,8 @@ namespace LTTP.Sprites
 {
     public class LinkSpriteAtlasFactory
     {
-        public static float frameRate = 15f;
+        public static float frameRate = 10;
+        //public static float attackFrameRate = frameRate * 0.1f;
         public static float attackFrameRate = frameRate * 1.5f;
 
         private Texture2D texture;

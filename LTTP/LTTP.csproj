@@ -53,7 +53,6 @@
     <Compile Include="Sprites\NamedAnimation.cs" />
     <Compile Include="Sprites\NamedSprite.cs" />
     <Compile Include="Scenes\SimpleMap\Sword\SwordComponent.cs" />
-    <Compile Include="Scenes\SimpleMap\Ninja.cs" />
     <Compile Include="Scenes\SimpleMap\SimpleMapScene.cs" />
     <Compile Include="Shared\ContentPathGenerator.cs">
       <AutoGen>True</AutoGen>

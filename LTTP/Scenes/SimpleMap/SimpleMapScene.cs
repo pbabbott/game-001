@@ -51,7 +51,7 @@ namespace LTTP.Scenes.SimpleMap
             var playerEntity = InitPlayer();
 
             // add a component to have the Camera follow the player
-            //Camera.ZoomIn(0.5f);
+            Camera.ZoomIn(0.5f);
             Camera.Entity.AddComponent(new FollowCamera(playerEntity));
 
         }
