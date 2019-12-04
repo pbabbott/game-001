@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using LTTP.Scenes.SimpleMap.Link;
 using Nez.PhysicsShapes;
 using LTTP.Sprites;
+using LTTP.Scenes.SimpleMap.Sword;
 
 namespace LTTP.Scenes.SimpleMap
 {
@@ -51,14 +52,14 @@ namespace LTTP.Scenes.SimpleMap
             var playerEntity = InitPlayer();
 
             // add a component to have the Camera follow the player
-            Camera.ZoomIn(0.5f);
+            Camera.ZoomIn(0.75f);
             Camera.Entity.AddComponent(new FollowCamera(playerEntity));
 
         }
 
         private Entity InitPlayer()
         {
-            //Core.DebugRenderEnabled = true;
+            Core.DebugRenderEnabled = true;
 
             // Create an atlas of sprites using the link2 texture
             var texture = Content.Load<Texture2D>(Nez.Content.Characters.Link2);
@@ -72,11 +73,20 @@ namespace LTTP.Scenes.SimpleMap
             var collider = playerEntity.AddComponent<CircleCollider>();
             collider.SetRadius(collisionRadius);
 
-            // Add the sword to the scene with its own collider
-            var swordEntity = CreateEntity("sword");
+            // Add the sword to the scene 
+            var swordContainer = CreateEntity("sword");
             var swordSpriteAtlas = linkSpriteAtlasFactory.GetSwordSpriteAtlas();
-            swordEntity.AddComponent(new SwordComponent(playerEntity, swordSpriteAtlas));
-            
+
+
+            var swordAnimation = CreateEntity("swordAnimation");
+            swordAnimation.SetParent(swordContainer);
+            var swordComponent = new SwordComponent(playerEntity, swordSpriteAtlas);
+            swordAnimation.AddComponent(swordComponent);
+
+            var swordCollider = CreateEntity("swordCollider");
+            swordCollider.SetParent(swordContainer);
+            swordCollider.AddComponent(new SwordCollider(swordComponent));
+
 
             // we only want to collide with the tilemap, which is on the default layer 0
             Flags.SetFlagExclusive(ref collider.CollidesWithLayers, 0);
