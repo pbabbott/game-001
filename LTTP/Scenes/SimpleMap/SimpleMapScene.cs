@@ -51,7 +51,7 @@ namespace LTTP.Scenes.SimpleMap
 
 
             // add a component to have the Camera follow the player
-            Camera.ZoomIn(0.25f);
+            //Camera.ZoomIn(0.25f);
             Camera.Entity.AddComponent(new FollowCamera(playerEntity));
 
         }
@@ -59,7 +59,7 @@ namespace LTTP.Scenes.SimpleMap
 
         private Entity InitPlayer()
         {
-            Core.DebugRenderEnabled = true;
+            //Core.DebugRenderEnabled = true;
 
             // Create an atlas of sprites using the link2 texture
             var texture = Content.Load<Texture2D>(Nez.Content.Characters.Link2);
