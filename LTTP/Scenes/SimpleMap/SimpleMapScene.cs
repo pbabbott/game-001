@@ -1,4 +1,5 @@
-﻿
+﻿using System.Linq;
+
 using Nez;
 using Nez.Sprites;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,6 +8,7 @@ using LTTP.Scenes.SimpleMap.Link;
 using Nez.PhysicsShapes;
 using LTTP.Sprites;
 using LTTP.Scenes.SimpleMap.Sword;
+using Nez.Tiled;
 
 namespace LTTP.Scenes.SimpleMap
 {
@@ -23,15 +25,12 @@ namespace LTTP.Scenes.SimpleMap
             
 
             // load the TiledMap and display it with a TiledMapComponent
-            var tiledEntity = CreateEntity("tiled-map-entity");
+            var tiledEntity = CreateEntity("tiled-map");
             var map = Content.LoadTiledMap("Content/maps/sample_map.tmx");
             
             var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map, "collision"));
-            tiledMapRenderer.SetLayersToRender(new[] { "bg", "terrain", "details", "collision" });
-
-            // render below/behind everything else. our player is at 0 and projectile is at 1.
+            tiledMapRenderer.SetLayersToRender(new[] { "bg", "terrain", "details" });
             tiledMapRenderer.RenderLayer = 10;
-
 
             // render our above-details layer after the player so the player is occluded by it when walking behind things
             var tiledMapDetailsComp = tiledEntity.AddComponent(new TiledMapRenderer(map));
@@ -48,14 +47,15 @@ namespace LTTP.Scenes.SimpleMap
             var bottomRight = new Vector2(map.TileWidth * (map.Width), map.TileWidth * (map.Height ));
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
 
-
             var playerEntity = InitPlayer();
 
+
             // add a component to have the Camera follow the player
-            Camera.ZoomIn(0.75f);
+            Camera.ZoomIn(0.25f);
             Camera.Entity.AddComponent(new FollowCamera(playerEntity));
 
         }
+
 
         private Entity InitPlayer()
         {
@@ -67,7 +67,8 @@ namespace LTTP.Scenes.SimpleMap
 
             // Add the player to the scene with its own collider
             var collisionRadius = 7.0f;
-            var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
+            //var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
+            var playerEntity = CreateEntity("player", new Vector2(430, 1580));
             var bodySpriteAtlas = linkSpriteAtlasFactory.GetBodySpriteAtlas();
             playerEntity.AddComponent(new LinkComponent(bodySpriteAtlas));
             var collider = playerEntity.AddComponent<CircleCollider>();
@@ -76,7 +77,6 @@ namespace LTTP.Scenes.SimpleMap
             // Add the sword to the scene 
             var swordContainer = CreateEntity("sword");
             var swordSpriteAtlas = linkSpriteAtlasFactory.GetSwordSpriteAtlas();
-
 
             var swordAnimation = CreateEntity("swordAnimation");
             swordAnimation.SetParent(swordContainer);

@@ -46,6 +46,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenes\SimpleMap\Bush\BushComponent.cs" />
     <Compile Include="Scenes\SimpleMap\CameraBounds.cs" />
     <Compile Include="Scenes\SimpleMap\Link\LinkComponent.cs" />
     <Compile Include="Scenes\SimpleMap\Sword\SwordCollider.cs" />

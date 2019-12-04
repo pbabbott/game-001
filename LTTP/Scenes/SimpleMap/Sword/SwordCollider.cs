@@ -1,10 +1,13 @@
-﻿using Nez;
+﻿using System.Linq;
+using Nez;
+using Nez.Tiled;
 
 namespace LTTP.Scenes.SimpleMap.Sword
 {
     public class SwordCollider : BoxCollider, ITriggerListener, IUpdatable
     {
         private SwordComponent _swordComponent;
+        private TiledMapRenderer _tiledMapRenderer;
 
         public SwordCollider(SwordComponent swordComponent)
         {
@@ -33,6 +36,8 @@ namespace LTTP.Scenes.SimpleMap.Sword
 
         public override void OnAddedToEntity()
         {
+            _tiledMapRenderer = Entity.Scene.FindEntity("tiled-map").GetComponent<TiledMapRenderer>();
+
             this.SetHeight(16);
             this.SetWidth(2);
         }
@@ -56,6 +61,47 @@ namespace LTTP.Scenes.SimpleMap.Sword
             this.Transform.SetLocalRotationDegrees(rotation);
         }
 
+        private void CheckCollisions()
+        {
+            var entityTile = _tiledMapRenderer.GetTileAtWorldPosition(Entity.Position);
+
+            // fetch anything that we might overlap with at our position excluding ourself. We don't care about ourself here.
+            var neighborColliders = Physics.BoxcastBroadphaseExcludingSelf(this);
+
+            var overlappingColliders = neighborColliders
+                .Where(x => x.Overlaps(this));
+
+            if (overlappingColliders.Any())
+            {
+                var detailLayer = _tiledMapRenderer.TiledMap.Layers["details"] as TmxLayer;
+
+                var overlappingDetailTiles = overlappingColliders
+                    .SelectMany(x => detailLayer.GetTilesIntersectingBounds(this.Bounds));
+
+                var removedCount = 0;
+
+                foreach (var tile in overlappingDetailTiles)
+                {
+                    if (tile != null && (tile.Gid == 680 || tile.Gid == 1381))
+                    {
+                        removedCount++;
+                        detailLayer.RemoveTile(tile.X, tile.Y);
+                        _tiledMapRenderer.CollisionLayer.RemoveTile(tile.X, tile.Y);
+                    }
+                }
+
+                if (removedCount > 0)
+                {
+                    _tiledMapRenderer.RemoveColliders();
+                    _tiledMapRenderer.AddColliders();
+                }
+
+            }
+
+         
+
+        }
+
         void IUpdatable.Update()
         {
             Entity.SetLocalPosition(_swordComponent.Entity.Position);
@@ -63,6 +109,7 @@ namespace LTTP.Scenes.SimpleMap.Sword
             if (_swordComponent.AnimationState == Nez.Sprites.SpriteAnimator.State.Running)
             {
                 RotateCollider(_swordComponent.Direction);
+                CheckCollisions();
             }
         }
 
