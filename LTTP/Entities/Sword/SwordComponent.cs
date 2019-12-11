@@ -1,10 +1,10 @@
-﻿using LTTP.Scenes.SimpleMap.Link;
+﻿using LTTP.Entities.Link;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 
-namespace LTTP.Scenes.SimpleMap.Sword
+namespace LTTP.Entities.Sword
 {
     public class SwordComponent : Component, ITriggerListener, IUpdatable
     {
@@ -17,18 +17,20 @@ namespace LTTP.Scenes.SimpleMap.Sword
         public SpriteAnimator.State AnimationState => _animator.AnimationState;
         public Direction Direction => _linkComponent.Direction;
 
-        public SwordComponent(Entity player, SpriteAtlas spriteAtlas)
+        public SwordComponent(SpriteAtlas spriteAtlas)
         {
-            _player = player;
             _spriteAtlas = spriteAtlas;
-
-            _linkComponent = _player.GetComponent<LinkComponent>();
         }
 
         public override void OnAddedToEntity()
         {
             _animator = Entity.AddComponent<SpriteAnimator>();
             _animator.AddAnimationsFromAtlas(_spriteAtlas);
+
+
+            _player = Entity.Scene.FindEntity("player");
+            _linkComponent = _player.GetComponent<LinkComponent>();
+
         }
 
         private void AnimateAttack(Direction direction)

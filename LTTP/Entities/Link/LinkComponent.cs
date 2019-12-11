@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
 
-namespace LTTP.Scenes.SimpleMap.Link
+namespace LTTP.Entities.Link
 {
     public class LinkComponent : Component, ITriggerListener, IUpdatable
     {

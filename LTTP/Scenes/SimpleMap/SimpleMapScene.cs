@@ -4,11 +4,11 @@ using Nez;
 using Nez.Sprites;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using LTTP.Scenes.SimpleMap.Link;
 using Nez.PhysicsShapes;
 using LTTP.Sprites;
-using LTTP.Scenes.SimpleMap.Sword;
 using Nez.Tiled;
+using LTTP.Entities.Link;
+using LTTP.Entities.Sword;
 
 namespace LTTP.Scenes.SimpleMap
 {
@@ -47,54 +47,28 @@ namespace LTTP.Scenes.SimpleMap
             var bottomRight = new Vector2(map.TileWidth * (map.Width), map.TileWidth * (map.Height ));
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
 
-            var playerEntity = InitPlayer();
-
-
-            // add a component to have the Camera follow the player
-            //Camera.ZoomIn(0.25f);
-            Camera.Entity.AddComponent(new FollowCamera(playerEntity));
-
-        }
-
-
-        private Entity InitPlayer()
-        {
-            //Core.DebugRenderEnabled = true;
-
-            // Create an atlas of sprites using the link2 texture
             var texture = Content.Load<Texture2D>(Nez.Content.Characters.Link2);
             var linkSpriteAtlasFactory = new LinkSpriteAtlasFactory(texture);
 
-            // Add the player to the scene with its own collider
-            var collisionRadius = 7.0f;
-            //var playerEntity = CreateEntity("player", new Vector2(16 * 20, 16 * 116));
-            var playerEntity = CreateEntity("player", new Vector2(430, 1580));
-            var bodySpriteAtlas = linkSpriteAtlasFactory.GetBodySpriteAtlas();
-            playerEntity.AddComponent(new LinkComponent(bodySpriteAtlas));
-            var collider = playerEntity.AddComponent<CircleCollider>();
-            collider.SetRadius(collisionRadius);
 
-            // Add the sword to the scene 
-            var swordContainer = CreateEntity("sword");
-            var swordSpriteAtlas = linkSpriteAtlasFactory.GetSwordSpriteAtlas();
-
-            var swordAnimation = CreateEntity("swordAnimation");
-            swordAnimation.SetParent(swordContainer);
-            var swordComponent = new SwordComponent(playerEntity, swordSpriteAtlas);
-            swordAnimation.AddComponent(swordComponent);
-
-            var swordCollider = CreateEntity("swordCollider");
-            swordCollider.SetParent(swordContainer);
-            swordCollider.AddComponent(new SwordCollider(swordComponent));
+            Core.DebugRenderEnabled = true;
 
 
-            // we only want to collide with the tilemap, which is on the default layer 0
-            Flags.SetFlagExclusive(ref collider.CollidesWithLayers, 0);
+            // Create Link
+            var linkEntityFactory = new LinkEntityFactory(this, linkSpriteAtlasFactory);
+            var startingPosition = new Vector2(430, 1580);
+            var playerEntity = linkEntityFactory.CreateEntity(startingPosition);
 
-            // move ourself to layer 1 so that we dont get hit by the projectiles that we fire
-            Flags.SetFlagExclusive(ref collider.PhysicsLayer, 1);
+            // Create a sword
+            var swordEntityFactory = new SwordEntityFactory(this, linkSpriteAtlasFactory);
+            var offscreen = new Vector2(-100, -100);
+            swordEntityFactory.CreateEntity(offscreen);
 
-            return playerEntity;
+
+            // add a component to have the Camera follow the player
+            //Camera.ZoomIn(0.75f);
+            Camera.Entity.AddComponent(new FollowCamera(playerEntity));
+
         }
 
         

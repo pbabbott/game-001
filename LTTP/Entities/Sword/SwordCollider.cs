@@ -1,13 +1,14 @@
-﻿using System.Linq;
-using Nez;
+﻿using Nez;
 using Nez.Tiled;
+using System.Linq;
 
-namespace LTTP.Scenes.SimpleMap.Sword
+namespace LTTP.Entities.Sword
 {
     public class SwordCollider : BoxCollider, ITriggerListener, IUpdatable
     {
         private SwordComponent _swordComponent;
         private TiledMapRenderer _tiledMapRenderer;
+        private SwordCollisionHandler _swordCollisionHandler;
 
         public SwordCollider(SwordComponent swordComponent)
         {
@@ -37,7 +38,7 @@ namespace LTTP.Scenes.SimpleMap.Sword
         public override void OnAddedToEntity()
         {
             _tiledMapRenderer = Entity.Scene.FindEntity("tiled-map").GetComponent<TiledMapRenderer>();
-
+            _swordCollisionHandler = new SwordCollisionHandler(_tiledMapRenderer);
             this.SetHeight(16);
             this.SetWidth(2);
         }
@@ -61,45 +62,26 @@ namespace LTTP.Scenes.SimpleMap.Sword
             this.Transform.SetLocalRotationDegrees(rotation);
         }
 
-        private void CheckCollisions()
+        private SwordCollisionResult CheckCollisions()
         {
-            var entityTile = _tiledMapRenderer.GetTileAtWorldPosition(Entity.Position);
-
             // fetch anything that we might overlap with at our position excluding ourself. We don't care about ourself here.
-            var neighborColliders = Physics.BoxcastBroadphaseExcludingSelf(this);
+            //var neighborColliders = Physics.BoxcastBroadphaseExcludingSelf(this);
+            //var overlappingColliders = neighborColliders.Where(x => x.Overlaps(this));
 
-            var overlappingColliders = neighborColliders
-                .Where(x => x.Overlaps(this));
+            var detailLayer = _tiledMapRenderer.TiledMap.Layers["details"] as TmxLayer;
 
-            if (overlappingColliders.Any())
+            var overlappingDetailTiles = detailLayer
+                .GetTilesIntersectingBounds(this.Bounds)
+                .Where(x => x != null)
+                .ToList();
+
+            return new SwordCollisionResult()
             {
-                var detailLayer = _tiledMapRenderer.TiledMap.Layers["details"] as TmxLayer;
+                DetailTiles = overlappingDetailTiles
+            };
 
-                var overlappingDetailTiles = overlappingColliders
-                    .SelectMany(x => detailLayer.GetTilesIntersectingBounds(this.Bounds));
-
-                var removedCount = 0;
-
-                foreach (var tile in overlappingDetailTiles)
-                {
-                    if (tile != null && (tile.Gid == 680 || tile.Gid == 1381))
-                    {
-                        removedCount++;
-                        detailLayer.RemoveTile(tile.X, tile.Y);
-                        _tiledMapRenderer.CollisionLayer.RemoveTile(tile.X, tile.Y);
-                    }
-                }
-
-                if (removedCount > 0)
-                {
-                    _tiledMapRenderer.RemoveColliders();
-                    _tiledMapRenderer.AddColliders();
-                }
-
-            }
-
-         
-
+           
+           
         }
 
         void IUpdatable.Update()
@@ -109,7 +91,8 @@ namespace LTTP.Scenes.SimpleMap.Sword
             if (_swordComponent.AnimationState == Nez.Sprites.SpriteAnimator.State.Running)
             {
                 RotateCollider(_swordComponent.Direction);
-                CheckCollisions();
+                var collisionResult = CheckCollisions();
+                _swordCollisionHandler.HandleCollisionResult(collisionResult);
             }
         }
 

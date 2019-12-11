@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LTTP.Scenes.SimpleMap.Link
+namespace LTTP.Entities.Link
 {
     public enum LinkAction
     {

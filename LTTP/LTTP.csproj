@@ -43,24 +43,30 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Entities\Core\IEntityFactory.cs" />
+    <Compile Include="Entities\Link\LinkEntityFactory.cs" />
+    <Compile Include="Entities\Sword\SwordCollisionHandler.cs" />
+    <Compile Include="Entities\Sword\SwordCollisionResult.cs" />
+    <Compile Include="Entities\Sword\SwordEntityFactory.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\SimpleMap\Bush\BushComponent.cs" />
     <Compile Include="Scenes\SimpleMap\CameraBounds.cs" />
-    <Compile Include="Scenes\SimpleMap\Link\LinkComponent.cs" />
-    <Compile Include="Scenes\SimpleMap\Sword\SwordCollider.cs" />
+    <Compile Include="Entities\Link\LinkComponent.cs" />
+    <Compile Include="Entities\Sword\SwordCollider.cs" />
     <Compile Include="Sprites\LinkSpriteAtlasFactory.cs" />
-    <Compile Include="Scenes\SimpleMap\Link\LinkStateFactory.cs" />
+    <Compile Include="Entities\Link\LinkStateFactory.cs" />
     <Compile Include="Sprites\NamedAnimation.cs" />
     <Compile Include="Sprites\NamedSprite.cs" />
-    <Compile Include="Scenes\SimpleMap\Sword\SwordComponent.cs" />
+    <Compile Include="Entities\Sword\SwordComponent.cs" />
     <Compile Include="Scenes\SimpleMap\SimpleMapScene.cs" />
     <Compile Include="Shared\ContentPathGenerator.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ContentPathGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="Sprites\TileLookupEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
